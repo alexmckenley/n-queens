@@ -108,9 +108,10 @@
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex){
       var queens = 0;
-      var board = this._currentAttributes;
+      // var board = this.rows();
+      var board = this.rows();
 
-      for(var i = 0; i < board.n; i++) {
+      for(var i = 0; i < board.length; i++) {
         if(board[i][colIndex]) {
           if(++queens > 1) {
             return true;
@@ -122,9 +123,9 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function(){
-      var board = this._currentAttributes;
+      var board = this.rows();
 
-      for(var i = 0; i < this.get('n'); i++) {
+      for(var i = 0; i < board.length; i++) {
         if(this.hasColConflictAt(i)) {
           return true;
         }
@@ -141,12 +142,14 @@
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow){
       var majorStart = majorDiagonalColumnIndexAtFirstRow;
       var queens = 0;
-      var board = this._currentAttributes;
+      var board = this.rows();
 
-      for(var i = 0; i <= (board.n-majorStart); i++) {
-        if(board[i][majorStart + i]) {
-          if(++queens > 1) {
-            return true;
+      for(var i = 0; i < board.length; i++) {
+        if(this._isInBounds(i, majorStart + i)){
+          if(board[i][majorStart + i]) {
+            if(++queens > 1) {
+              return true;
+            }
           }
         }
       }
@@ -155,9 +158,9 @@
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function(){
-      var board = this._currentAttributes;
+      var board = this.rows();
 
-      for(var i = 0; i < board.n; i++) {
+      for(var i = 0; i < board.length; i++) {
         if(this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
@@ -174,31 +177,25 @@
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow){
       var minorStart = minorDiagonalColumnIndexAtFirstRow;
       var queens = 0;
-      var board = this._currentAttributes;
+      var board = this.rows();
 
-      for(var i = board.n-1-minorStart; i < board.n; i++) {
-        if(board[i][i]) {
-          if(++queens > 1) {
-            return true;
-          } 
+      for(var i = minorStart; i >= 0; i--) {
+        if(this._isInBounds(minorStart - i, i)) {
+          if(board[minorStart - i][i]) {
+            if(++queens > 1) {
+              return true;
+            }
+          }
         }
       }
-
-      // for(var i = board.n-1; i >= (board.n - 1 - minorStart); i--) {
-      //   if(board[i][minTemp--]) {
-      //     if(++queens > 1) {
-      //       return true;
-      //     }
-      //   }
-      // }      
-      // return false; 
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function(){
-      var board = this._currentAttributes;
+      var board = this.rows();
 
-      for(var i = 0; i < board.n; i++) {
+      for(var i = 0; i < board.length; i++) {
         if(this.hasMinorDiagonalConflictAt(i)) {
           return true;
         }
@@ -218,5 +215,4 @@
       });
     });
   };
-
 }());
