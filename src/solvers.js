@@ -119,7 +119,7 @@ window.countNRooksSolutions = function(n){
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n){
-  var solution = undefined; //fixme
+  var solution = [];
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
@@ -128,7 +128,62 @@ window.findNQueensSolution = function(n){
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n){
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+  var board = (new Board({n: n})).rows();
+  var clearBoard = (new Board({n: n})).rows();
+  var rounds = 0;
+
+
+  var addNextQueen = function(board, row, position, availablePlaces, isFirst){
+    var oldBoard = _.map(board, function(arr){
+      return _.map(arr, function(a){
+        return a;
+      });
+    });
+    var count = 0;
+    var nextRowAP = 0;
+    if(row === n){
+      if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
+        solutionCount++;
+      }
+      return;
+    }
+    // console.table(board);
+    //iterate through row
+    for(var i = 0; i < n; i++){
+      if(board[row][i] === 0){
+        if(count === position) {
+          board = addXsQueens(board, row, i, n);
+          availablePlaces -= 1;
+          break;
+        }
+        count += 1;
+      }
+    }
+    //if not on the last row
+    if( row !== (n - 1)){
+      for(i = 0; i < n; i++){
+        if(board[row+1][i] === 0){
+          nextRowAP += 1;
+        }
+      }
+    }
+    addNextQueen(board, row + 1, 0, nextRowAP);
+    // if(position < availablePlaces){
+    if(availablePlaces > 0 && position < n-1){
+      position += 1;
+      // debugger;
+      // if(isFirst) {
+      //   console.log("this is the oldBoard:");
+      //   console.table(oldBoard);
+      // }
+      // console.table(oldBoards[oldBoards.length-1]);
+      addNextQueen(oldBoard, row, position, availablePlaces);
+    }
+    return;
+  };
+
+  addNextQueen(board, 0, 0, n, true);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
@@ -141,4 +196,34 @@ window.removePossibilities = function(board, row, column, n){
   }
   board[row][column] = 1;
   return board;
+};
+
+window.addXsQueens = function(board, row, column, n){
+  var majorStart = column - row;
+  var minorStart = column + row;
+  for(var i = 0; i < n; i++){
+    board[row][i] = 'x';
+    board[i][column] = 'x';
+    if(this.isInBounds(i, majorStart + i, n)){
+      board[i][majorStart + i] = 'x';
+    }
+  }
+
+  for(var i = minorStart; i >= 0; i--) {
+    if(this.isInBounds(minorStart - i, i, n)) {
+      board[minorStart - i][i] = 'x';
+    }
+  }
+
+
+  board[row][column] = 1;
+  return board;
+};
+
+
+window.isInBounds = function(rowIndex, colIndex, n){
+  return (
+    0 <= rowIndex && rowIndex < n &&
+    0 <= colIndex && colIndex < n
+  );
 };
