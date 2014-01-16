@@ -64,9 +64,7 @@ window.countNRooksSolutions = function(n){
    //   debugger;
     }
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
@@ -130,16 +128,13 @@ window.findNQueensSolution = function(n){
       return;
     }
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
     if(row === n){
       if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
         solutionCount++;
-        debugger;
         solution = board;
       }
       return;
@@ -196,9 +191,7 @@ window.countNQueensSolutions = function(n){
 
   var addNextQueen = function(board, row, position, availablePlaces, isFirst){
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
