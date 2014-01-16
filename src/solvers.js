@@ -50,56 +50,67 @@ window.findNRooksSolution = function(n){
 window.countNRooksSolutions = function(n){
   var solutionCount = 0;
   var board = (new Board({n: n})).rows();
-  var oldBoards
+  var clearBoard = (new Board({n: n})).rows();
+  var rounds = 0;
 
-  var addNextRook = function(board, row, position, availablePlaces){
-    console.log("called with: ", "row ", row, "position ", position, "Available Places ", availablePlaces);
-    if(availablePlaces >= 1){
-      //debugger;
+
+  var addNextRook = function(board, row, position, availablePlaces, isFirst){
+    // if(isFirst) {
+    //   console.log("This is the original board:");
+    //   console.table(board);
+    // }
+    // console.log("called with: ", "row ", row, "position ", position, "Available Places ", availablePlaces);
+    if(position === 1) {
+   //   debugger;
     }
-    var oldBoard = board.slice(0);
+    var oldBoard = _.map(board, function(arr){
+      return _.map(arr, function(a){
+        return a;
+      });
+    });
     var count = 0;
-    var nextRowAP = 0
+    var nextRowAP = 0;
     if(row === n){
-      console.log("SOLUTION BELOW!!!")
-      console.table(board);
       solutionCount++;
       return;
     }
-    console.table(board);
+    // console.table(board);
     //iterate through row
     for(var i = 0; i < n; i++){
       if(board[row][i] === 0){
-        // console.log("Position ",position);
-        if(count++ === position) {
+        if(count === position) {
           board = removePossibilities(board, row, i, n);
           availablePlaces -= 1;
+          break;
         }
+        count += 1;
       }
     }
+    //if not on the last row
     if( row !== (n - 1)){
-      for(var i = 0; i < n; i++){
+      for(i = 0; i < n; i++){
         if(board[row+1][i] === 0){
           nextRowAP += 1;
         }
       }
     }
     addNextRook(board, row + 1, 0, nextRowAP);
-    if(position < availablePlaces){
+    // if(position < availablePlaces){
+    if(availablePlaces > 0 && position < n-1){
       position += 1;
-      debugger;
-      // console.log(oldBoard === board);
-      // console.log("CurrentBoard:")
-      // console.table(oldBoard);
-      // console.log("OldBoard:")
-      // console.table(board);
+      // debugger;
+      // if(isFirst) {
+      //   console.log("this is the oldBoard:");
+      //   console.table(oldBoard);
+      // }
+      // console.table(oldBoards[oldBoards.length-1]);
       addNextRook(oldBoard, row, position, availablePlaces);
     }
     return;
   };
 
-  addNextRook(board, 0, 0, n);
-
+  addNextRook(board, 0, 0, n, true);
+  // console.table(oldBoards);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
