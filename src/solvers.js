@@ -166,15 +166,18 @@ window.countNQueensSolutions = function(n){
 
 
   var addNextQueen = function(board, row, position, availablePlaces, queensOnBoard){
-    if(availablePlaces > 0 ){
-      // var oldBoard = _.map(board, function deepCopy(arr){
-      //     return arr.slice();
-      //   });
-      var oldBoard = [];
-      for(var i = 0; i < board.length; i++) {
-        oldBoard.push(board[i].slice());
+    var oldBoard = [];
+    (function deepCopyF(){
+      if(availablePlaces > 1){
+        // var oldBoard = _.map(board, function deepCopy(arr){
+        //     return arr.slice();
+        //   });
+        var boardLen = board.length;
+        for(var i = 0; i < boardLen; i++) {
+          oldBoard.push(board[i].slice());
+        }
       }
-    }
+    })();
     var oldQueens = queensOnBoard;
     var count = 0;
     var nextRowAP = 0;
@@ -189,25 +192,29 @@ window.countNQueensSolutions = function(n){
     }
 
     //iterate through row
-    for(var i = 0; i < n; i++){
-      if(board[row][i] === 0){
-        if(count === position) {
-          board = addXsQueens(board, row, i, n);
-          availablePlaces -= 1;
-          queensOnBoard += 1;
-          break;
+    (function checkFreePlaces() {
+      for(var i = 0; i < n; i++){
+        if(board[row][i] === 0){
+          if(count === position) {
+            board = addXsQueens(board, row, i, n);
+            availablePlaces -= 1;
+            queensOnBoard += 1;
+            break;
+          }
+          count += 1;
         }
-        count += 1;
       }
-    }
+    })();
     //if not on the last row
-    if( row !== (n - 1)){
-      for(i = 0; i < n; i++){
-        if(board[row+1][i] === 0){
-          nextRowAP += 1;
+    (function checkLastRow() {
+      if( row !== (n - 1)){
+        for(i = 0; i < n; i++){
+          if(board[row+1][i] === 0){
+            nextRowAP += 1;
+          }
         }
       }
-    }
+    })();
     addNextQueen(board, row + 1, 0, nextRowAP, queensOnBoard);
     // if(position < availablePlaces){
     if(availablePlaces > 0 && position < n-1){
