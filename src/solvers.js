@@ -115,7 +115,7 @@ window.findNQueensSolution = function(n){
     var count = 0;
     var nextRowAP = 0;
     if(row === n){
-      if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
+      if(_.filter(_.flatten(board), function(value){ return value === 1 ? true : false;}).length === n){
         solutionCount++;
         solution = board;
       }
@@ -162,20 +162,28 @@ window.countNQueensSolutions = function(n){
   var board = (new Board({n: n})).rows();
   var clearBoard = (new Board({n: n})).rows();
   var rounds = 0;
+  var startTime = new Date();
 
 
-  var addNextQueen = function(board, row, position, availablePlaces, isFirst){
-    var oldBoard = _.map(board, function(arr){
-      return arr.slice();
-    });
+  var addNextQueen = function(board, row, position, availablePlaces, queensOnBoard){
+    if(availablePlaces > 0 ){
+      // var oldBoard = _.map(board, function deepCopy(arr){
+      //     return arr.slice();
+      //   });
+      var oldBoard = [];
+      for(var i = 0; i < board.length; i++) {
+        oldBoard.push(board[i].slice());
+      }
+    }
+    var oldQueens = queensOnBoard;
     var count = 0;
     var nextRowAP = 0;
     if(row === n){
-      if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
+      if(queensOnBoard === n){
         solutionCount++;
-        if(solutionCount % 1000 === 0){
-          console.log(solutionCount);
-        }
+        // if(solutionCount % 1000 === 0){
+        //   console.log(solutionCount);
+        // }
       }
       return;
     }
@@ -186,6 +194,7 @@ window.countNQueensSolutions = function(n){
         if(count === position) {
           board = addXsQueens(board, row, i, n);
           availablePlaces -= 1;
+          queensOnBoard += 1;
           break;
         }
         count += 1;
@@ -199,16 +208,18 @@ window.countNQueensSolutions = function(n){
         }
       }
     }
-    addNextQueen(board, row + 1, 0, nextRowAP);
+    addNextQueen(board, row + 1, 0, nextRowAP, queensOnBoard);
     // if(position < availablePlaces){
     if(availablePlaces > 0 && position < n-1){
       position += 1;
-      addNextQueen(oldBoard, row, position, availablePlaces);
+      addNextQueen(oldBoard, row, position, availablePlaces, oldQueens);
     }
     return;
   };
 
-  addNextQueen(board, 0, 0, n, true);
+  addNextQueen(board, 0, 0, n, 0);
+  var endTime = new Date();
+  console.log("Found Solution in ", (endTime - startTime)/1000, "s");
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
