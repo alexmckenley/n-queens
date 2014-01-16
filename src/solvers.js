@@ -45,7 +45,6 @@ window.findNRooksSolution = function(n){
 };
 
 
-
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n){
   var solutionCount = 0;
@@ -55,18 +54,8 @@ window.countNRooksSolutions = function(n){
 
 
   var addNextRook = function(board, row, position, availablePlaces, isFirst){
-    // if(isFirst) {
-    //   console.log("This is the original board:");
-    //   console.table(board);
-    // }
-    // console.log("called with: ", "row ", row, "position ", position, "Available Places ", availablePlaces);
-    if(position === 1) {
-   //   debugger;
-    }
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
@@ -74,7 +63,6 @@ window.countNRooksSolutions = function(n){
       solutionCount++;
       return;
     }
-    // console.table(board);
     //iterate through row
     for(var i = 0; i < n; i++){
       if(board[row][i] === 0){
@@ -95,22 +83,14 @@ window.countNRooksSolutions = function(n){
       }
     }
     addNextRook(board, row + 1, 0, nextRowAP);
-    // if(position < availablePlaces){
     if(availablePlaces > 0 && position < n-1){
       position += 1;
-      // debugger;
-      // if(isFirst) {
-      //   console.log("this is the oldBoard:");
-      //   console.table(oldBoard);
-      // }
-      // console.table(oldBoards[oldBoards.length-1]);
       addNextRook(oldBoard, row, position, availablePlaces);
     }
     return;
   };
 
   addNextRook(board, 0, 0, n, true);
-  // console.table(oldBoards);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
@@ -130,21 +110,18 @@ window.findNQueensSolution = function(n){
       return;
     }
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
     if(row === n){
       if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
         solutionCount++;
-        debugger;
         solution = board;
       }
       return;
     }
-    // console.table(board);
+
     //iterate through row
     for(var i = 0; i < n; i++){
       if(board[row][i] === 0){
@@ -165,15 +142,8 @@ window.findNQueensSolution = function(n){
       }
     }
     addNextQueen(board, row + 1, 0, nextRowAP);
-    // if(position < availablePlaces){
     if(availablePlaces > 0 && position < n-1){
       position += 1;
-      // debugger;
-      // if(isFirst) {
-      //   console.log("this is the oldBoard:");
-      //   console.table(oldBoard);
-      // }
-      // console.table(oldBoards[oldBoards.length-1]);
       addNextQueen(oldBoard, row, position, availablePlaces);
     }
     return;
@@ -196,9 +166,7 @@ window.countNQueensSolutions = function(n){
 
   var addNextQueen = function(board, row, position, availablePlaces, isFirst){
     var oldBoard = _.map(board, function(arr){
-      return _.map(arr, function(a){
-        return a;
-      });
+      return arr.slice();
     });
     var count = 0;
     var nextRowAP = 0;
@@ -211,7 +179,7 @@ window.countNQueensSolutions = function(n){
       }
       return;
     }
-    // console.table(board);
+
     //iterate through row
     for(var i = 0; i < n; i++){
       if(board[row][i] === 0){
@@ -235,12 +203,6 @@ window.countNQueensSolutions = function(n){
     // if(position < availablePlaces){
     if(availablePlaces > 0 && position < n-1){
       position += 1;
-      // debugger;
-      // if(isFirst) {
-      //   console.log("this is the oldBoard:");
-      //   console.table(oldBoard);
-      // }
-      // console.table(oldBoards[oldBoards.length-1]);
       addNextQueen(oldBoard, row, position, availablePlaces);
     }
     return;
@@ -272,12 +234,11 @@ window.addXsQueens = function(board, row, column, n){
     }
   }
 
-  for(var i = minorStart; i >= 0; i--) {
+  for(i = minorStart; i >= 0; i--) {
     if(this.isInBounds(minorStart - i, i, n)) {
       board[minorStart - i][i] = 'x';
     }
   }
-
 
   board[row][column] = 1;
   return board;
