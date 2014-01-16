@@ -25,22 +25,13 @@ window.findNRooksSolution = function(n){
     return board;
   };
 
-  var removePossibilities = function(board, row, column){
-    for(var i = 0; i < n; i++){
-      board[row][i] = 'x';
-      board[i][column] = 'x';
-    }
-    board[row][column] = 1;
-    return board;
-  };
-
   var addNextRook = function(board, row){
     if(row === n){
       return board;
     }
     for(var i = 0; i < n; i++){
       if(board[row][i] === 0){
-        board = removePossibilities(board, row, i);
+        board = removePossibilities(board, row, i, n);
         break;
       }
     }
@@ -57,7 +48,57 @@ window.findNRooksSolution = function(n){
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n){
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+  var board = (new Board({n: n})).rows();
+  var oldBoards
+
+  var addNextRook = function(board, row, position, availablePlaces){
+    console.log("called with: ", "row ", row, "position ", position, "Available Places ", availablePlaces);
+    if(availablePlaces >= 1){
+      //debugger;
+    }
+    var oldBoard = board.slice(0);
+    var count = 0;
+    var nextRowAP = 0
+    if(row === n){
+      console.log("SOLUTION BELOW!!!")
+      console.table(board);
+      solutionCount++;
+      return;
+    }
+    console.table(board);
+    //iterate through row
+    for(var i = 0; i < n; i++){
+      if(board[row][i] === 0){
+        // console.log("Position ",position);
+        if(count++ === position) {
+          board = removePossibilities(board, row, i, n);
+          availablePlaces -= 1;
+        }
+      }
+    }
+    if( row !== (n - 1)){
+      for(var i = 0; i < n; i++){
+        if(board[row+1][i] === 0){
+          nextRowAP += 1;
+        }
+      }
+    }
+    addNextRook(board, row + 1, 0, nextRowAP);
+    if(position < availablePlaces){
+      position += 1;
+      debugger;
+      // console.log(oldBoard === board);
+      // console.log("CurrentBoard:")
+      // console.table(oldBoard);
+      // console.log("OldBoard:")
+      // console.table(board);
+      addNextRook(oldBoard, row, position, availablePlaces);
+    }
+    return;
+  };
+
+  addNextRook(board, 0, 0, n);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -80,4 +121,13 @@ window.countNQueensSolutions = function(n){
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
+};
+
+window.removePossibilities = function(board, row, column, n){
+  for(var i = 0; i < n; i++){
+    board[row][i] = 'x';
+    board[i][column] = 'x';
+  }
+  board[row][column] = 1;
+  return board;
 };
