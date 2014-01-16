@@ -215,12 +215,14 @@ window.countNQueensSolutions = function(n){
         }
       }
     })();
-    addNextQueen(board, row + 1, 0, nextRowAP, queensOnBoard);
-    // if(position < availablePlaces){
-    if(availablePlaces > 0 && position < n-1){
-      position += 1;
-      addNextQueen(oldBoard, row, position, availablePlaces, oldQueens);
-    }
+    (function endPart(){
+      addNextQueen(board, row + 1, 0, nextRowAP, queensOnBoard);
+      // if(position < availablePlaces){
+      if(availablePlaces > 0 && position < n-1){
+        position += 1;
+        addNextQueen(oldBoard, row, position, availablePlaces, oldQueens);
+      }
+    })();
     return;
   };
 
