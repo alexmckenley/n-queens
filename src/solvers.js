@@ -119,7 +119,67 @@ window.countNRooksSolutions = function(n){
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n){
-  var solution = [];
+  var solutionCount = 0;
+  var board = (new Board({n: n})).rows();
+  var rounds = 0;
+  var solution = (new Board({n: n})).rows();
+
+
+  var addNextQueen = function(board, row, position, availablePlaces, isFirst){
+    if(solution){
+      return;
+    }
+    var oldBoard = _.map(board, function(arr){
+      return _.map(arr, function(a){
+        return a;
+      });
+    });
+    var count = 0;
+    var nextRowAP = 0;
+    if(row === n){
+      if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
+        solutionCount++;
+        debugger;
+        solution = board;
+      }
+      return;
+    }
+    // console.table(board);
+    //iterate through row
+    for(var i = 0; i < n; i++){
+      if(board[row][i] === 0){
+        if(count === position) {
+          board = addXsQueens(board, row, i, n);
+          availablePlaces -= 1;
+          break;
+        }
+        count += 1;
+      }
+    }
+    //if not on the last row
+    if( row !== (n - 1)){
+      for(i = 0; i < n; i++){
+        if(board[row+1][i] === 0){
+          nextRowAP += 1;
+        }
+      }
+    }
+    addNextQueen(board, row + 1, 0, nextRowAP);
+    // if(position < availablePlaces){
+    if(availablePlaces > 0 && position < n-1){
+      position += 1;
+      // debugger;
+      // if(isFirst) {
+      //   console.log("this is the oldBoard:");
+      //   console.table(oldBoard);
+      // }
+      // console.table(oldBoards[oldBoards.length-1]);
+      addNextQueen(oldBoard, row, position, availablePlaces);
+    }
+    return;
+  };
+
+  addNextQueen(board, 0, 0, n);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
