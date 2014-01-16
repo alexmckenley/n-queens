@@ -205,6 +205,9 @@ window.countNQueensSolutions = function(n){
     if(row === n){
       if(_.filter(_.flatten(board), function(value){if(value===1)return true; return false;}).length === n){
         solutionCount++;
+        if(solutionCount % 1000 === 0){
+          console.log(solutionCount);
+        }
       }
       return;
     }
